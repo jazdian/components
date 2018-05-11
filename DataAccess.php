@@ -8,25 +8,9 @@
 class DataAccess
 {
     private $respConn = null;
-    private $jsonparameters = null;
-
-    /**
-     *
-     * @param type object PDO connection. The control Conecction.php return a object with the object connection.
-     *     $obj_cn = new Connection('localhost', 'mydatabase', 'root', '');
-     *     $conn = $obj_cn->SimpleConnectionPDO();
-     *     $qry = new DataAccess();
-     *     $qry->SetConn($conn['obj_']);
-     */
-
-    public function SetConn($respConn_)
-    {
-        $this->respConn = $respConn_;
-    }
-    public function SetJsonParams($jsonparameters_)
-    {
-        $this->jsonparameters = $jsonparameters_;
-    }
+    private $params = '{":none":"none|string"}';
+    private $querycmd = "";
+    private $querycrud = "";
 
     public function ExecuteCommand()
     {
@@ -34,7 +18,7 @@ class DataAccess
         if ($pars['suc_'] === false) {
             return $pars;
         }
-        foreach ($this->jsonparameters as $key => $value) 
+        foreach ($this->CreateJsonEncode() as $key => $value) 
         {
             if ($key === 'params') {$ArrayParams = $value;} 
             else if ($key === 'vars') {$ArrayVar = $value;}
@@ -54,7 +38,7 @@ class DataAccess
 
     private function ValidateParams()
     {
-        $json_valid = $this->jsonparameters;
+        $json_valid = $this->CreateJsonEncode();
         if (is_null($json_valid)) {
             $values = array(
                 'suc_' => false
@@ -69,7 +53,7 @@ class DataAccess
         {
 
             $names = '';
-            foreach ($this->jsonparameters as $key => $value) 
+            foreach ($this->CreateJsonEncode() as $key => $value) 
             {
                 if ($key === 'params') {$names .= '1';} 
                 else if ($key === 'vars') {$names .= '1';}
@@ -130,11 +114,21 @@ class DataAccess
             {
                 $Table = $Statement->fetchAll(\PDO::FETCH_OBJ);
             }
-            if($ArrayVar->TypeFuncion === 'Insert')
+            else if($ArrayVar->TypeFuncion === 'Insert')
             {
                 $last_id = $this->respConn->lastInsertId();
                 $Table = array(0 => (object) array('id' => 1, 'code' => $last_id, 'messege' => 'Row id inserted: ' . $last_id ));
             }
+            else if($ArrayVar->TypeFuncion === 'Update')
+            {
+                $last_id = $this->respConn->lastInsertId();
+                $Table = array(0 => (object) array('id' => 1, 'code' => $last_id, 'messege' => 'Row updated' ));
+            }            
+            else if($ArrayVar->TypeFuncion === 'Delete')
+            {
+                $last_id = $this->respConn->lastInsertId();
+                $Table = array(0 => (object) array('id' => 1, 'code' => $last_id, 'messege' => 'Row deleted' ));
+            }            
             else
             {
                 $Table = array(0 => (object) array('id' => 1, 'code' => 1, 'messege' => 'Affected rows matched: ' . $NumRows ));
@@ -191,4 +185,59 @@ class DataAccess
         return $DatsJson;
     }
 
+    private function CreateJsonEncode()
+    {
+        $JsonParams = '{"params":' . $this->params . ',
+                "vars":{"TypeFuncion":"' . $this->querycmd . '","QueryString":"' . $this->querycrud . '"}}';
+        
+        return json_decode($JsonParams);
+    }
+
+    /**
+     *
+     * @param type object PDO connection. The control Conecction.php return a object with the object connection.
+     *     $obj_cn = new Connection('localhost', 'mydatabase', 'root', '');
+     *     $conn = $obj_cn->SimpleConnectionPDO();
+     *     $qry = new DataAccess();
+     *     $qry->SetConn($conn['obj_']);
+     */
+    public function SetConn($respConn_)
+    {
+        $this->respConn = $respConn_;
+    }
+
+    /**
+     * Set the value of params
+     *
+     * @return  self
+     */ 
+    public function setParams($params)
+    {
+        $this->params = json_encode($params);
+        return $this;
+    }
+
+    /**
+     * Set the value of querycmd
+     *
+     * @return  self5
+     */ 
+    public function setQuerycmd($querycmd)
+    {
+        $this->querycmd = $querycmd;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of querycrud
+     *
+     * @return  self
+     */ 
+    public function setQuerycrud($querycrud)
+    {
+        $this->querycrud = $querycrud;
+
+        return $this;
+    }
 }
