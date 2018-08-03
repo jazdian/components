@@ -39,11 +39,25 @@ $dt->SetHeader(array('Id', 'Brand', 'Type', 'Item'));
 $dt->SetID('dtSmartPhones');
 $dt->SetClass('Table');
 $dt->SetStyle('#dtSmartPhones{font-size:20px; width:65%;}');
-$dt->SetBtnSelect(array('show'=>true, 'name'=>'Select Row', 'onclick'=>'SelectRow()', 'param'=>'id', 'colname'=>'Select'));
+$dt->SetBtnSelect(array('show'=>true,
+                        'name'=>'Select Row',
+                        'onclick'=>'SelectRow()',
+                        'param'=>'id',
+                        'colname'=>'Select'));
+$dt->SetBtnEdit(array('show'=>true,
+                        'name'=>'Edit Row',
+                        'onclick'=>'EditRow()',
+                        'param'=>'id',
+                        'colname'=>'Editar'));
+$dt->SetBtnDelete(array('show'=>true,
+                        'name'=>'Delete Row',
+                        'onclick'=>'',
+                        'param'=>'id',
+                        'colname'=>'Eliminar'));
+
 $dt->SetScript('function SelectRow(id) { document.getElementById("Msg").innerHTML = "You have selected row: " + id; } ');
 
 echo '<style>.Table{ border-style: dotted; }</style>';
 echo $dt->CreateDataTable();
-
 
 echo '<br><br><div id="Msg"></div>';
