@@ -166,6 +166,13 @@ SEL;
         }
 
         if ($this->datasource !== null) {
+
+            if( isset($this->datasource[0]->code) )
+            {
+                $Options = '<option selected value="0">.: 0 rows matched :.</option>';
+                $FinSelect = '</select>';
+                return $this->WrapInputInHtml($IniSelect . $Options . $FinSelect);                
+            }            
             foreach ($this->datasource as $key => $value) {
                 if ($this->itemselected == $value->$valfield) {
                     $Options = $Options . '<option selected value="' . $value->$valfield . '">' . $value->$textfield . '</option>';
