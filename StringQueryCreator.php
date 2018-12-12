@@ -13,6 +13,7 @@ class StringQueryCreator
     private $HAVING = "";
     private $LIMIT = "";
     private $INNERS = "";
+    private $VALUES = "";
     
     /**
      * Set the value of FIELDS
@@ -140,6 +141,17 @@ class StringQueryCreator
         return $this;
     }
 
+    /**
+     * Set the value of VALUES
+     *
+     * @return  self
+     */ 
+    public function setVALUES($VALUES)
+    {
+        $this->VALUES = $VALUES;
+
+        return $this;
+    }    
 
     public function CreateSelectString()
     {
@@ -160,6 +172,19 @@ class StringQueryCreator
         return $string_select;
 
     }    
+
+    public function CreateInsertString()
+    {
+        $fields = $this->FIELDS;
+        $table = $this->TABLE;
+        $values = $this->VALUES;
+
+        $string_insert = "INSERT INTO $table ( $fields ) VALUES ( $values );";
+        $string_insert = str_replace("  ", " ", $string_insert);
+        
+        return $string_insert;
+        
+    }
 
 
 

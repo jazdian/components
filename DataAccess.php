@@ -18,9 +18,9 @@ class DataAccess
         if ($pars['suc_'] === false) {
             return $pars;
         }
-        foreach ($this->CreateJsonEncode() as $key => $value) 
+        foreach ($this->CreateJsonEncode() as $key => $value)
         {
-            if ($key === 'params') {$ArrayParams = $value;} 
+            if ($key === 'params') {$ArrayParams = $value;}
             else if ($key === 'vars') {$ArrayVar = $value;}
         }
         $StrQry = $ArrayVar->QueryString;
@@ -48,14 +48,14 @@ class DataAccess
                 , 'det_' => "Error in json string. Something is wrong en json string, please validate...",
             );
             return $values;
-        } 
-        else 
+        }
+        else
         {
 
             $names = '';
-            foreach ($this->CreateJsonEncode() as $key => $value) 
+            foreach ($this->CreateJsonEncode() as $key => $value)
             {
-                if ($key === 'params') {$names .= '1';} 
+                if ($key === 'params') {$names .= '1';}
                 else if ($key === 'vars') {$names .= '1';}
             }
             if($names !== '11')
@@ -90,7 +90,7 @@ class DataAccess
         {
             foreach ($ArrayParams as $value) {
                 $vals = explode('|',$value);
-                $type = $this->TipoDat($vals);                
+                $type = $this->TipoDat($vals);
                 $Statement->bindValue($i, $type[0], $type[1]);
                 $i++;
             }
@@ -109,7 +109,7 @@ class DataAccess
         if ($result === true) {
 
             $NumRows = $Statement->rowCount();
-            
+
             if($ArrayVar->TypeFuncion === 'Read')
             {
                 $Table = $Statement->fetchAll(\PDO::FETCH_OBJ);
@@ -123,21 +123,21 @@ class DataAccess
             {
                 $last_id = $this->respConn->lastInsertId();
                 $Table = array(0 => (object) array('id' => 1, 'code' => $last_id, 'messege' => 'Row updated' ));
-            }            
+            }
             else if($ArrayVar->TypeFuncion === 'Delete')
             {
                 $last_id = $this->respConn->lastInsertId();
                 $Table = array(0 => (object) array('id' => 1, 'code' => $last_id, 'messege' => 'Row deleted' ));
-            }            
+            }
             else
             {
                 $Table = array(0 => (object) array('id' => 1, 'code' => 1, 'messege' => 'Affected rows matched: ' . $NumRows ));
             }
-            
+
             if ($NumRows === 0) {
                 $Table = array(0 => (object) array('id' => 1, 'code' => 0, 'messege' => 'Affected rows matched: ' . $NumRows ));
             }
-            
+
             $values = array('suc_' => true
                 , 'obj_' => $Table
                 , 'msg_' => 'Success'
@@ -189,7 +189,7 @@ class DataAccess
     {
         $JsonParams = '{"params":' . $this->params . ',
                 "vars":{"TypeFuncion":"' . $this->querycmd . '","QueryString":"' . $this->querycrud . '"}}';
-        
+
         return json_decode($JsonParams);
     }
 
@@ -207,10 +207,12 @@ class DataAccess
     }
 
     /**
-     * Set the value of params
+     * Parametros para el query. array(":field"=>"value|type[string]")
+     *
+     * @param type array
      *
      * @return  self
-     */ 
+     */
     public function setParams($params)
     {
         $this->params = json_encode($params);
@@ -221,7 +223,7 @@ class DataAccess
      * Set the value of querycmd
      *
      * @return  self5
-     */ 
+     */
     public function setQuerycmd($querycmd)
     {
         $this->querycmd = $querycmd;
@@ -233,7 +235,7 @@ class DataAccess
      * Set the value of querycrud
      *
      * @return  self
-     */ 
+     */
     public function setQuerycrud($querycrud)
     {
         $this->querycrud = $querycrud;

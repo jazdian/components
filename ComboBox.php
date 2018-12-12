@@ -26,7 +26,8 @@ class ComboBox
     private $onclick = '';
     private $onsubmit = '';
     private $disabled = false;
-    private $addrowfirst = '';
+    private $addrowfirst = array();
+    private $addrowend = array();
     private $wraphtmlcode = '';
     private $labelname = '';
 
@@ -110,9 +111,14 @@ class ComboBox
         $this->disabled = $disabled_;
     }
 
-    public function SetAddRowFirst($addrowfirst_)
+    public function SetAddRowFirst($addrowfirstval_, $addrowfirst_)
     {
-        $this->addrowfirst = $addrowfirst_;
+        $this->addrowfirst =array($addrowfirstval_,  $addrowfirst_);
+    }
+
+    public function SetAddRowEnd($addrowendval_, $addrowend_)
+    {
+        $this->addrowend = array($addrowendval_,  $addrowend_);
     }
 
     public function SetWrapHtmlCode($wraphtmlcode_)
@@ -150,10 +156,8 @@ SEL;
         $valfield = $this->datavaluefield;
         $textfield = $this->datatextfield;
 
-        if ($this->addrowfirst === '') {
-            $Options = '';
-        } else {
-            $Options = '<option value="0">' . $this->addrowfirst . '</option>';
+        if (!empty($this->addrowfirst)) {
+            $Options = '<option value="'.$this->addrowfirst[0].'">' . $this->addrowfirst[1] . '</option>';
         }
 
         $msgErr = $this->ValidateObject($this->datasource);
@@ -172,7 +176,7 @@ SEL;
                 $Options = '<option selected value="0">.: 0 rows matched :.</option>';
                 $FinSelect = '</select>';
                 return $this->WrapInputInHtml($IniSelect . $Options . $FinSelect);                
-            }            
+            }
             foreach ($this->datasource as $key => $value) {
                 if ($this->itemselected == $value->$valfield) {
                     $Options = $Options . '<option selected value="' . $value->$valfield . '">' . $value->$textfield . '</option>';
@@ -180,6 +184,12 @@ SEL;
                     $Options = $Options . '<option value="' . $value->$valfield . '">' . $value->$textfield . '</option>';
                 }
             }
+
+            if(!empty($this->addrowend))
+            {
+                $Options = $Options . '<option value="'.$this->addrowend[0].'">' . $this->addrowend[1] . '</option>';
+            }
+
             $FinSelect = '</select>';
             return $this->WrapInputInHtml($IniSelect . $Options . $FinSelect);
         } else {

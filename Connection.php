@@ -30,7 +30,7 @@ class Connection
                     , $this->db_user
                     , $this->db_password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $pdo->exec("SET NAMES utf8");
+            $pdo->exec("SET NAMES latin1");
 
             return $object = array(
                'suc_' => true
