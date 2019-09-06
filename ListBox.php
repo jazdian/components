@@ -3,7 +3,7 @@
 /**
  * Description of ListBox
  *
- * @author gesfor.rgonzalez
+ * @author Rene Gonzalez Campos
  */
 class ListBox
 {
@@ -25,6 +25,8 @@ class ListBox
     private $onclick = '';    
     private $onsubmit = '';
     private $disabled = false;
+    private $wraphtmlcode = '';
+    private $labelname = array();
     
     public function SetID($id_)
     {
@@ -90,6 +92,38 @@ class ListBox
     {
         $this->disabled = $disabled_;
     }    
+
+    public function SetWrapHtmlCode($wraphtmlcode_)
+    {
+        if ($wraphtmlcode_ !== '') {
+            $this->wraphtmlcode = $wraphtmlcode_;
+        }
+    }
+
+    /**
+     * 
+     * @param string $labelname_    Texto de la etiqueta
+     * @param string $lblclass_     Clase de la etiqueta
+     * @return self
+     */    
+    public function SetLabelName($labelname_, $lblclass_)
+    {
+        $this->labelname = array($labelname_,  $lblclass_);
+    }
+
+    /**
+     * Set the value of bootstrap_form
+     * @param bool $bootstrap_form  Default value is false. Si el valor es true se aplica el estilo de boostrap de un form-control
+     * 
+     * 
+     * @return  self
+     */ 
+    public function SetBootstrapForm($bootstrap_form)
+    {
+        $this->bootstrap_form = $bootstrap_form;
+
+        return $this;
+    }
     
     public function CreateListBox()
     {
@@ -102,6 +136,15 @@ class ListBox
         $Options = '';
         $valfield = $this->datavaluefield;
         $textfield = $this->datatextfield;
+
+        $msgErr = $this->ValidateObject($this->datasource);
+        if($msgErr !== '')
+        {
+            $Options = '<option selected value="0">.: Error :.</option>';
+            $Options .= '<option value="1">.: ' . $msgErr . ' :.</option>';
+            $FinSelect = '</select>';
+            return $this->WrapInputInHtml($IniSelect . $Options . $FinSelect);
+        }
 
         if($this->datasource !== null)
         {        
@@ -118,17 +161,64 @@ class ListBox
             }
 
             $FinSelect = '</select>';
-            return $IniSelect . $Options . $FinSelect;
+            //return $IniSelect . $Options . $FinSelect;
+            return $this->WrapInputInHtml($IniSelect . $Options . $FinSelect);
         }else
         {
             $Options = '<option selected value="0">.: Connection or DataBase error :.</option>';
             $FinSelect = '</select>';
-            return $IniSelect . $Options . $FinSelect; 
+            //return $IniSelect . $Options . $FinSelect; 
+            return $this->WrapInputInHtml($IniSelect . $Options . $FinSelect);
         }
 
         
     }
     
+    private function ValidateObject($object)
+    {
+        try
+        {
+            if (!isset($object[0])) {
+                throw new Exception('DataSource Object is not valid...');
+            } else {
+                if (!is_object($object[0])) {
+                    throw new Exception('DataSource Object is not valid...');
+                }
+            }
+            return '';
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    private function WrapInputInHtml($strcombobox)
+    {
+
+        if ($this->wraphtmlcode != '')
+        {
+            $newhtmlcode = str_replace("_INPUT_", $strcombobox, $this->wraphtmlcode);
+            //$newhtmlcode2 = str_replace("_ID_", $this->StrPull($this->id), $newhtmlcode);
+            $newhtmlcode2 = str_replace("_ID_", $this->id, $newhtmlcode);
+            $newhtmlcode3 = str_replace("_LNAME_", $this->labelname[0], $newhtmlcode2);
+            $newhtmlcode4 = str_replace("_LCLASS_", $this->labelname[1], $newhtmlcode3);
+            return $newhtmlcode4;            
+        } 
+
+        if($this->wraphtmlcode == '' && $this->bootstrap_form == false)
+        {
+            return $strcombobox;
+        }
+        else
+        {
+            $form_group = '  <div class="form-group">
+                <label for="'.$this->id.'">'.$this->labelname[0].'</label>
+                '.$strcombobox.'
+            </div>';
+            return $form_group;
+        }
+
+    }
+
     private function StringFunctionsJavaScript()
     {
         $eventosscript = '';

@@ -29,7 +29,8 @@ class ComboBox
     private $addrowfirst = array();
     private $addrowend = array();
     private $wraphtmlcode = '';
-    private $labelname = '';
+    private $bootstrap_form = false;
+    private $labelname = array();
 
     public function SetID($id_)
     {
@@ -128,11 +129,29 @@ class ComboBox
         }
     }
 
-    public function SetLabelName($labelname_)
+    /**
+     * Set the value of bootstrap_form
+     * @param bool $bootstrap_form  Default value is false. Si el valor es true se aplica el estilo de boostrap de un form-control
+     * 
+     * 
+     * @return  self
+     */ 
+    public function SetBootstrapForm($bootstrap_form)
     {
-        if ($labelname_ !== '') {
-            $this->labelname = $labelname_;
-        }
+        $this->bootstrap_form = $bootstrap_form;
+
+        return $this;
+    }    
+
+    /**
+     * 
+     * @param string $labelname_    Texto de la etiqueta
+     * @param string $lblclass_     Clase de la etiqueta
+     * @return self
+     */
+    public function SetLabelName($labelname_, $lblclass_)
+    {
+        $this->labelname = array($labelname_,  $lblclass_);
     }
 
     public function CreateComboBox()
@@ -218,15 +237,30 @@ SEL;
 
     private function WrapInputInHtml($strcombobox)
     {
-        if ($this->wraphtmlcode === '') {
-            return $strcombobox;
-        } else {
 
+        if ($this->wraphtmlcode != '')
+        {
             $newhtmlcode = str_replace("_INPUT_", $strcombobox, $this->wraphtmlcode);
-            $newhtmlcode2 = str_replace("_ID_", $this->StrPull($this->id), $newhtmlcode);
-            $newhtmlcode3 = str_replace("_LNAME_", $this->labelname, $newhtmlcode2);
-            return $newhtmlcode3;
+            //$newhtmlcode2 = str_replace("_ID_", $this->StrPull($this->id), $newhtmlcode);
+            $newhtmlcode2 = str_replace("_ID_", $this->id, $newhtmlcode);
+            $newhtmlcode3 = str_replace("_LNAME_", $this->labelname[0], $newhtmlcode2);
+            $newhtmlcode4 = str_replace("_LCLASS_", $this->labelname[1], $newhtmlcode3);
+            return $newhtmlcode4;            
+        } 
+
+        if($this->wraphtmlcode == '' && $this->bootstrap_form == false)
+        {
+            return $strcombobox;
         }
+        else
+        {
+            $form_group = '  <div class="form-group">
+                <label for="'.$this->id.'">'.$this->labelname[0].'</label>
+                '.$strcombobox.'
+            </div>';
+            return $form_group;
+        }
+
     }
 
     private function StrPull($string_)
@@ -263,5 +297,7 @@ SEL;
 
         return $eventosscript;
     }
+
+
 
 }

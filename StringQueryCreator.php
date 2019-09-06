@@ -3,7 +3,7 @@
 
 class StringQueryCreator
 {
-    
+
     private $FIELDS = "";
     private $TABLE = "";
     private $WHERE = "";
@@ -171,7 +171,7 @@ class StringQueryCreator
 
         return $string_select;
 
-    }    
+    }
 
     public function CreateInsertString()
     {
@@ -183,10 +183,33 @@ class StringQueryCreator
         $string_insert = str_replace("  ", " ", $string_insert);
         
         return $string_insert;
-        
     }
 
+    public function CreateUpdateString()
+    {
 
+        $table = $this->TABLE;
+        $fields = $this->FIELDS;
+        $values = $this->VALUES;
+        $where = $this->WHERE;
+
+        $arr_fiel = explode(",", $fields);
+        $arr_vals = explode(",", $values);
+
+        $col_val = "";
+
+        for ( $i = 0; $i < count( $arr_fiel ); $i++) { 
+            
+            $col_val .= $arr_fiel[$i] . "=" . $arr_vals[$i] . ",";
+        }
+
+        $col_val = trim($col_val, ',');
+
+        $string_update = "UPDATE $table SET $col_val $where;";
+        $string_update = str_replace("  ", " ", $string_update);
+
+        return $string_update;        
+    }
 
 
 }
