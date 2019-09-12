@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Description of classExecMysql
+ * Description of DataAccess
  *
  * @author gesfor.rgonzalez
  */
@@ -12,6 +12,20 @@ class DataAccess
     private $querycmd = "";
     private $querycrud = "";
 
+    /**
+     * 
+     * Execute the query and return an array and in the key "obj_" comes the object with the data or a response from the base.
+     * The arrangement contains 5 keys:
+     * suc_ => bool. (true = Query success)
+     * obj_ => object. (Object with database response)
+     * msg_ => string. (Message sent by the function)
+     * num_ => int. (Number of records returned)
+     * det_ => string. (Another more detailed message)     
+     * 
+     * 
+     * @return array
+     * 
+     */
     public function ExecuteCommand()
     {
         $pars = $this->ValidateParams();
@@ -44,7 +58,7 @@ class DataAccess
                 'suc_' => false
                 , 'obj_' => array(0 => (object) array('id' => 1, 'code' => 0, 'messege' => 'Error in json string...'))
                 , 'msg_' => 'Error in json string. Something is wrong en json string, please validate...'
-                , 'num_' => 0
+                , 'num_' => -1
                 , 'det_' => "Error in json string. Something is wrong en json string, please validate...",
             );
             return $values;
@@ -64,7 +78,7 @@ class DataAccess
                     'suc_' => false
                     , 'obj_' => array(0 => (object) array('id' => 1, 'code' => 0, 'messege' => 'Error in key(s) of json string...'))
                     , 'msg_' => 'Error in keys of json string.'
-                    , 'num_' => 0
+                    , 'num_' => -1
                     , 'det_' => 'Error in keys of json string. Example: {"params":{":param1":1},"vars":{"TypeFuncion":"Read",QueryString":"SELECT field1, field2 FROM table1 WHERE field3 = :param1;"}}',
                 );
                 return $values;
@@ -195,11 +209,9 @@ class DataAccess
 
     /**
      *
-     * @param type object PDO connection. The control Conecction.php return a object with the object connection.
-     *     $obj_cn = new Connection('localhost', 'mydatabase', 'root', '');
-     *     $conn = $obj_cn->SimpleConnectionPDO();
-     *     $qry = new DataAccess();
-     *     $qry->SetConn($conn['obj_']);
+     * We need to pass a connection to the base in order to obtain the data or generate an insert, update or delete.
+     * 
+     * @param object $respConn_
      */
     public function SetConn($respConn_)
     {
@@ -207,39 +219,44 @@ class DataAccess
     }
 
     /**
-     * Parametros para el query. array(":field"=>"value|type[string]")
-     *
-     * @param type array
-     *
-     * @return  self
+     * 
+     * Parameters to the query. array(":field"=>"value|type[string]")
+     * We must send the parameters within an associative array where the key is the name of the field. 
+     * The value is separated from a pipe with the data type of the value.
+     * Example: array(":field"=>"Hello World|string", ":filed2"=>"25|int")
+     * 
      */
     public function setParams($params)
     {
         $this->params = json_encode($params);
-        return $this;
     }
 
     /**
-     * Set the value of querycmd
+     * 
+     * Type of query you want to execute. 
+     * SELECT = "Read".
+     * INSERT = "Insert"
+     * UPDATE = "Update"
+     * DELETE = "Delete"
      *
-     * @return  self5
+     * @param string $querycmd
      */
-    public function setQuerycmd($querycmd)
+    public function setQueryCmd($querycmd)
     {
         $this->querycmd = $querycmd;
-
-        return $this;
     }
 
     /**
-     * Set the value of querycrud
+     * 
+     * Send the query string as a parameter
      *
-     * @return  self
+     * 
+     * @param string $querycrud
+     * 
      */
-    public function setQuerycrud($querycrud)
+    public function setQueryCrud($querycrud)
     {
         $this->querycrud = $querycrud;
 
-        return $this;
     }
 }

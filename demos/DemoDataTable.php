@@ -22,8 +22,16 @@ $exec->SetConn($link['obj_']);
 #CRUD Create, Read, Update, Delete
 #======================================================================================================
 
-$exec->setQuerycmd("Read");
-$exec->setQuerycrud("SELECT id, val1, val2, val3 FROM pruebas;");
+require_once '../StringQueryCreator.php';
+
+$sqry = new StringQueryCreator();
+
+$sqry->setFIELDS('id, val1, val2, val3');
+$sqry->setTABLE('pruebas');
+$query = $sqry->CreateSelectString();
+
+$exec->setQueryCmd("Read");
+$exec->setQueryCrud($query);
 
 $dats = $exec->ExecuteCommand();
 

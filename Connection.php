@@ -13,6 +13,14 @@ class Connection
     private $db_user = '';
     private $db_password = '';
 
+    /**
+     * Pass the server settings to create the connection.
+     *
+     * @param [string] $db_host_
+     * @param [string] $db_database_
+     * @param [string] $db_user_
+     * @param [string] $db_password_
+     */
     public function __construct($db_host_, $db_database_, $db_user_, $db_password_)
     {
         $this->db_host = $db_host_;
@@ -21,6 +29,18 @@ class Connection
         $this->db_password = $db_password_;
     }
 
+
+    /**
+     * This function returns an arrangement. The arrangement contains the connection object and other details.
+     * The arrangement contains 5 keys:
+     * suc_ => bool. (true = connection success)
+     * obj_ => object. (The object of the connection)
+     * msg_ => string. (Message sent by the function)
+     * num_ => int. (numeric value of the message)
+     * det_ => string. (Another more detailed message)
+     * 
+     * @return array
+     */
     public function SimpleConnectionPDO()
     {
         try
@@ -45,7 +65,7 @@ class Connection
                'suc_' => false
                , 'obj_' => array(0=>(object)array('id' => 1, 'code' => $Ex->getCode(), 'messege' => $Ex->getMessage()))
                , 'msg_' => $Ex->getMessage()
-               , 'num_' => 0
+               , 'num_' => -1
                , 'det_' => $Ex->getFile() . " | Line: " . $Ex->getLine()
             );
         }
