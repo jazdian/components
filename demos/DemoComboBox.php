@@ -89,7 +89,7 @@ $lb->SetWrapHtmlCode($div2);
 
     <?= $lb->CreateListBox(); ?>
 
-    <?php //$cb->CreateComboBox(); ?>
+    <?php $cb->CreateComboBox(); ?>
 
 </body>
 </html>

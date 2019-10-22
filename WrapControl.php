@@ -21,9 +21,9 @@ class WrapControl
       
    public function CreateWrapControl($search, $replace)
    {
-      if ($html_ !== '')
+      if ($this->htmlcode !== '')
       {
-	 str_replace($search, $replace, $this->htmlcode);
+	      str_replace($search, $replace, $this->htmlcode);
       }
       return $this->htmlcode;
    }
