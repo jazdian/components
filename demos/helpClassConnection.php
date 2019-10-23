@@ -2,7 +2,7 @@
 
 require_once '../Connection.php';
 
-## Create instance of Connection 
+## Create instance of Connection
 ## Pass the server settings to create the connection.
 
 $conn = new Connection('localhost','test','root','');
@@ -28,13 +28,13 @@ array (size=5)
 var_dump($link['obj_']);
 
 
-## fix returned when the function was contains an error
+## fix returned when the server's settings contains an error
 /*
 array (size=5)
   'suc_' => boolean false
-  'obj_' => 
+  'obj_' =>
     array (size=1)
-      0 => 
+      0 =>
         object(stdClass)[2]
           public 'id' => int 1
           public 'code' => int 1049
